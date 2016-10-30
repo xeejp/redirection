@@ -6,6 +6,9 @@ import createLogger from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import { createAction, createReducer } from 'redux-act'
 import throttle from 'react-throttle-render'
+import {persistStore, autoRehydrate} from 'redux-persist'
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import reduceReducers from 'reduce-reducers'
 import { create as createJsondiffpatch } from 'jsondiffpatch'
@@ -32,8 +35,10 @@ export default function startApp(component, reducer, saga, host=false) {
 
   const store = createStore(
     reduceReducers(reducer, patcher),
-    applyMiddleware(...middlewares)
+    applyMiddleware(...middlewares),
+    autoRehydrate()
   )
+  persistStore(store)
 
   if (host) {
     // Saga
@@ -68,9 +73,11 @@ export default function startApp(component, reducer, saga, host=false) {
 
   const ThrottledComponent = throttle(component, 50)
   render(
-    <Provider store={store}>
-      {React.createElement(ThrottledComponent)}
-    </Provider>,
+      <Provider store={store}>
+        <MuiThemeProvider>
+          {React.createElement(ThrottledComponent)}
+        </MuiThemeProvider>
+      </Provider>,
     document.getElementById("content")
   )
 }

@@ -1,6 +1,7 @@
 defmodule Redirection.Host do
   def get_filter(data) do
-    %{}
+    %{
+    }
   end
 
   def filter_data(data) do

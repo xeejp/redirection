@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import SequentialRedirection from './SequentialRedirection'
 import { fetchContents } from 'shared/actions'
 
 const actionCreators = {
@@ -20,6 +21,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <SequentialRedirection />
       </div>
     )
   }
