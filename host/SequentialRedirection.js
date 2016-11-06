@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { Card, CardHeader, CardText, CardActions } from 'material-ui/Card'
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 import ImageDelete from 'material-ui/svg-icons/action/delete'
+import ImageAdd from 'material-ui/svg-icons/content/add'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 
 import { addLine, editLine, deleteLine, resetLines, redirect } from './actions'
@@ -68,47 +70,61 @@ class SequentialRedirection extends Component {
     console.log(lines)
     const canRedirect = lines.length >= 2 && lines[0].text.match(/\S/g) && lines[1].text.match(/\S/g)
     return (
-      <div>
-        <div>
-          <RaisedButton
-            label="リダイレクト"
-            onClick={this.redirect}
-            disabled={!canRedirect}
-          />
-        </div>
-        {
-          lines.map((token, index) => (
-            <div key={token.id}>
-              <label htmlFor={token.id}>{ this.getLabel(index, lines.length) }</label>
-              <TextField
-                id={token.id}
-                value={token.text}
-                onChange={(event) => this.editLine(event, index)}
-              />
-              <FloatingActionButton
-                mini={true}
-                secondary={true}
-                disabled={lines.length == 2}
-                onTouchTap={(event) => this.deleteLine(event, index)}
-              >
-                <ImageDelete />
-              </FloatingActionButton>
-            </div>
-          ))
-        }
-        <div>
-          <RaisedButton
-            label="行を追加"
-            onClick={this.addLine}
-          />
-        </div>
-        <div>
+      <Card>
+        <CardText>
+          <p>実験記号を入力してください。</p>
+          <table>
+            <tbody>
+            {
+              lines.map((token, index) => (
+                <tr key={token.id}>
+                  <td style={{width: "5%"}}>
+                    <label htmlFor={token.id}>{ this.getLabel(index, lines.length) }</label>
+                  </td>
+                  <td style={{width: "30%"}}>
+                    <TextField
+                      id={token.id}
+                      value={token.text}
+                      onChange={(event) => this.editLine(event, index)}
+                      style={{width: "95%"}}
+                    />
+                  </td>
+                  <td style={{width: "5%"}}>
+                    <FloatingActionButton
+                      mini={true}
+                      secondary={true}
+                      disabled={lines.length == 2}
+                      onTouchTap={(event) => this.deleteLine(event, index)}
+                    >
+                      <ImageDelete />
+                    </FloatingActionButton>
+                  </td>
+                </tr>
+              ))
+            }
+            </tbody>
+          </table>
+          <FloatingActionButton
+            mini={true}
+            onTouchTap={this.addLine}
+          >
+            <ImageAdd />
+          </FloatingActionButton>
+        </CardText>
+        <CardActions>
+            <RaisedButton
+              label="リダイレクト"
+              primary={true}
+              onClick={this.redirect}
+              disabled={!canRedirect}
+            />
           <RaisedButton
             label="リセット"
             onClick={this.resetLines}
+            secondary={true}
           />
-        </div>
-      </div>
+        </CardActions>
+      </Card>
     )
   }
 }
