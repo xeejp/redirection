@@ -1,6 +1,9 @@
 defmodule Redirection.Host do
+  alias Redirection.Main
+
   def get_filter(data) do
     %{
+      experiments: true,
     }
   end
 
@@ -10,5 +13,9 @@ defmodule Redirection.Host do
 
   def redirect(data, src, dest) do
     {:ok, %{data: data, experiment: %{src => %{redirect: dest}}}}
+  end
+
+  def refresh(data) do
+    Main.refresh data
   end
 end

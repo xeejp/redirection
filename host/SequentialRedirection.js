@@ -2,16 +2,19 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { Card, CardHeader, CardText, CardActions } from 'material-ui/Card'
+import MenuItem from 'material-ui/MenuItem'
 import TextField from 'material-ui/TextField'
+import SelectField from 'material-ui/SelectField'
 import RaisedButton from 'material-ui/RaisedButton'
 import ImageDelete from 'material-ui/svg-icons/action/delete'
 import ImageAdd from 'material-ui/svg-icons/content/add'
+import ImageReplay from 'material-ui/svg-icons/av/replay'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 
 import { addLine, editLine, deleteLine, resetLines, redirect } from './actions'
 
-const mapStateToProps = ({ lines }) => {
-  return { lines }
+const mapStateToProps = ({ experiments, lines }) => {
+  return { experiments, lines }
 }
 
 const actionCreators = {
@@ -27,7 +30,6 @@ class SequentialRedirection extends Component {
     this.editLine = this.editLine.bind(this)
     this.redirect = this.redirect.bind(this)
     this.state = {
-      lines: ["", ""]
     }
   }
 
@@ -36,6 +38,10 @@ class SequentialRedirection extends Component {
     const from = lines[0].text, to = lines[1].text
     sendData("redirect", { from, to })
     redirect()
+  }
+
+  refresh() {
+    sendData("refresh", null)
   }
 
   resetLines() {
@@ -47,8 +53,12 @@ class SequentialRedirection extends Component {
     this.props.addLine(id.toString())
   }
 
-  editLine(event, index) {
-    this.props.editLine(index, event.target.value)
+  editLine(index, value) {
+    this.props.editLine(index, value)
+  }
+
+  handleChange(row, event, index, value) {
+    this.editLine(row, value)
   }
 
   deleteLine(event, index) {
@@ -66,9 +76,9 @@ class SequentialRedirection extends Component {
   }
 
   render() {
-    const { lines } = this.props;
-    console.log(lines)
+    const { lines, experiments } = this.props
     const canRedirect = lines.length >= 2 && lines[0].text.match(/\S/g) && lines[1].text.match(/\S/g)
+    const items = experiments.map((x, i) => <MenuItem key={i} value={x} primaryText={x}/>)
     return (
       <Card>
         <CardText>
@@ -78,16 +88,16 @@ class SequentialRedirection extends Component {
             {
               lines.map((token, index) => (
                 <tr key={token.id}>
-                  <td style={{width: "5%"}}>
-                    <label htmlFor={token.id}>{ this.getLabel(index, lines.length) }</label>
-                  </td>
                   <td style={{width: "30%"}}>
-                    <TextField
-                      id={token.id}
-                      value={token.text}
-                      onChange={(event) => this.editLine(event, index)}
+                    <label htmlFor={token.id}>{ this.getLabel(index, lines.length) }</label>
+                    <SelectField
+                      floatingLabelText="Experiment Token"
+                      value={lines[index].text}
+                      onChange={this.handleChange.bind(this, index)}
                       style={{width: "95%"}}
-                    />
+                    >
+                      {items}
+                    </SelectField>
                   </td>
                   <td style={{width: "5%"}}>
                     <FloatingActionButton
@@ -109,6 +119,12 @@ class SequentialRedirection extends Component {
             onTouchTap={this.addLine}
           >
             <ImageAdd />
+          </FloatingActionButton>
+          <FloatingActionButton
+            mini={true}
+            onTouchTap={this.refresh}
+          >
+            <ImageReplay />
           </FloatingActionButton>
         </CardText>
         <CardActions>

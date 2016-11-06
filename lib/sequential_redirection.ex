@@ -1,6 +1,7 @@
 defmodule Redirection do
   use XeeThemeScript
   require Logger
+  alias Redirection.Actions
   alias Redirection.Main
   alias Redirection.Host
 
@@ -19,11 +20,19 @@ defmodule Redirection do
     wrap_result(data, data)
   end
 
+  def receive_meta(data, meta) do
+    data = Map.put(data, :host_id, meta.host_id)
+            |> Main.refresh
+    {:ok, %{data: data}}
+  end
+
   # Host router
   def handle_received(data, %{"action" => action, "params" => params}) do
     Logger.debug("[Redirection] #{action} #{inspect params}")
     result = case {action, params} do
+      {"fetch contents", _} -> Actions.update_host_contents(data)
       {"redirect", %{"from" => src, "to" => dest}} -> Host.redirect(data, src, dest)
+      {"refresh", _} -> Host.refresh(data)
       _ -> {:ok, %{data: data}}
     end
     wrap_result(data, result)

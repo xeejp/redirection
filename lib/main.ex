@@ -5,6 +5,7 @@ defmodule Redirection.Main do
     %{
       participants: %{},
       participants_number: 0,
+      experiments: [],
     }
   end
 
@@ -15,6 +16,13 @@ defmodule Redirection.Main do
   end
 
   def join(data, id), do: data
+
+  def refresh(data) do
+    experiments = Xee.HostServer.get(data.host_id)
+                  |> MapSet.to_list
+                  |> Enum.map(&Xee.TokenServer.get_token(&1))
+    Map.put(data, :experiments, experiments)
+  end
 
   def compute_diff(old, %{data: new} = result) do
     import Host, only: [filter_data: 1]

@@ -1,9 +1,10 @@
 import { createReducer } from 'redux-act'
 import { combineReducers } from 'redux'
+import concatenateReducers from 'redux-concatenate-reducers'
 
 import { addLine, editLine, deleteLine, resetLines, redirect } from './actions'
 
-const lines = createReducer({
+const linesReducer = createReducer({
   [resetLines]: (state, payload) => [{id: "0", text: ""}, {id: "1", text: ""}],
   [addLine]: (state, payload) => {
     const newLines = [].concat(state)
@@ -32,4 +33,10 @@ const lines = createReducer({
   }
 }, [{id: "0", text: ""}, {id: "1", text: ""}])
 
-export default combineReducers({ lines })
+const lines = (state={lines: undefined}, action) => ({lines: linesReducer(state.lines, action)})
+
+const reducer = createReducer({
+  'update contents': (state, payload) => payload
+}, {experiments: []})
+
+export default concatenateReducers([lines, reducer])
