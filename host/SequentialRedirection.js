@@ -3,15 +3,17 @@ import { connect } from 'react-redux'
 
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
+import ImageDelete from 'material-ui/svg-icons/action/delete'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
 
-import { addLine, editLine, resetLines, redirect } from './actions'
+import { addLine, editLine, deleteLine, resetLines, redirect } from './actions'
 
 const mapStateToProps = ({ lines }) => {
   return { lines }
 }
 
 const actionCreators = {
-  addLine, editLine, resetLines, redirect
+  addLine, editLine, deleteLine, resetLines, redirect
 }
 
 class SequentialRedirection extends Component {
@@ -19,6 +21,7 @@ class SequentialRedirection extends Component {
     super(props, context)
     this.addLine = this.addLine.bind(this)
     this.resetLines = this.resetLines.bind(this)
+    this.deleteLine = this.deleteLine.bind(this)
     this.editLine = this.editLine.bind(this)
     this.redirect = this.redirect.bind(this)
     this.state = {
@@ -46,6 +49,10 @@ class SequentialRedirection extends Component {
     this.props.editLine(index, event.target.value)
   }
 
+  deleteLine(event, index) {
+    this.props.deleteLine(index)
+  }
+
   getLabel(index, length) {
     if (index == 0) {
       return "From: "
@@ -58,7 +65,8 @@ class SequentialRedirection extends Component {
 
   render() {
     const { lines } = this.props;
-    const canRedirect = lines.length >= 2 && lines[0].text.length && lines[1].text.length
+    console.log(lines)
+    const canRedirect = lines.length >= 2 && lines[0].text.match(/\S/g) && lines[1].text.match(/\S/g)
     return (
       <div>
         <div>
@@ -77,6 +85,14 @@ class SequentialRedirection extends Component {
                 value={token.text}
                 onChange={(event) => this.editLine(event, index)}
               />
+              <FloatingActionButton
+                mini={true}
+                secondary={true}
+                disabled={lines.length == 2}
+                onTouchTap={(event) => this.deleteLine(event, index)}
+              >
+                <ImageDelete />
+              </FloatingActionButton>
             </div>
           ))
         }
