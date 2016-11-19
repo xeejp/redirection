@@ -31,7 +31,8 @@ class SequentialRedirection extends Component {
     this.editLine = this.editLine.bind(this)
     this.redirect = this.redirect.bind(this)
     this.state = {
-      open: false //SnackBar
+      open: false, // SnackBar
+      text: ""     // Snackbar
     }
   }
 
@@ -40,11 +41,18 @@ class SequentialRedirection extends Component {
     const from = lines[0].text, to = lines[1].text
     sendData("redirect", { from, to })
     redirect()
+    this.setState({
+      open: true,
+      text: "リダイレクトしました."
+    })
   }
 
   refresh() {
     sendData("refresh", null)
-    this.setState({open: true})
+    this.setState({
+      open: true,
+      text: "実験リストを更新しました."
+    })
   }
 
   resetLines() {
@@ -131,7 +139,7 @@ class SequentialRedirection extends Component {
           </FloatingActionButton>
           <Snackbar
             open={this.state.open}
-            message="実験リストを更新しました"
+            message={this.state.text}
             autoHideDuration={2000}
             onRequestClose={() => this.setState({open: false})}
           />
