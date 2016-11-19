@@ -21,6 +21,7 @@ defmodule Redirection.Main do
     experiments = Xee.HostServer.get(data.host_id)
                   |> MapSet.to_list
                   |> Enum.map(&Xee.TokenServer.get_token(&1))
+                  |> Enum.uniq
     Map.put(data, :experiments, experiments)
   end
 

@@ -30,7 +30,7 @@ defmodule Redirection do
   def handle_received(data, %{"action" => action, "params" => params}) do
     Logger.debug("[Redirection] #{action} #{inspect params}")
     result = case {action, params} do
-      {"fetch contents", _} -> Actions.update_host_contents(data)
+      {"fetch contents", _} -> Actions.update_host_contents(Host.refresh(data))
       {"redirect", %{"from" => src, "to" => dest}} -> Host.redirect(data, src, dest)
       {"refresh", _} -> Host.refresh(data)
       _ -> {:ok, %{data: data}}
