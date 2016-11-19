@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import { Card, CardHeader, CardText, CardActions } from 'material-ui/Card'
 import MenuItem from 'material-ui/MenuItem'
+import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -30,6 +31,7 @@ class SequentialRedirection extends Component {
     this.editLine = this.editLine.bind(this)
     this.redirect = this.redirect.bind(this)
     this.state = {
+      open: false //SnackBar
     }
   }
 
@@ -42,6 +44,7 @@ class SequentialRedirection extends Component {
 
   refresh() {
     sendData("refresh", null)
+    this.setState({open: true})
   }
 
   resetLines() {
@@ -122,10 +125,16 @@ class SequentialRedirection extends Component {
           </FloatingActionButton>
           <FloatingActionButton
             mini={true}
-            onTouchTap={this.refresh}
+            onTouchTap={this.refresh.bind(this)}
           >
             <ImageReplay />
           </FloatingActionButton>
+          <Snackbar
+            open={this.state.open}
+            message="実験リストを更新しました"
+            autoHideDuration={2000}
+            onRequestClose={() => this.setState({open: false})}
+          />
         </CardText>
         <CardActions>
             <RaisedButton
