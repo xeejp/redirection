@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { fetchContents } from 'shared/actions'
+import { fetchContents } from '../shared/actions'
 
 const actionCreators = {
   fetchContents
