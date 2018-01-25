@@ -36,6 +36,10 @@ class SequentialRedirection extends Component {
     }
   }
 
+  componentDidMount() {
+    sendData("refresh", null)
+  }
+
   redirect() {
     const { lines, redirect } = this.props
     const from = lines[0].text, to = lines[1].text
@@ -89,7 +93,7 @@ class SequentialRedirection extends Component {
   render() {
     const { lines, experiments } = this.props
     const canRedirect = lines.length >= 2 && lines[0].text.match(/\S/g) && lines[1].text.match(/\S/g)
-    const items = experiments.map((x, i) => <MenuItem key={i} value={x} primaryText={x}/>)
+    let items = Array.from(new Set(experiments)).map((x, i) => <MenuItem key={i} value={x} primaryText={x}/>)
     return (
       <Card>
         <CardText>
